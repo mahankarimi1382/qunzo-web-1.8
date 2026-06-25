@@ -17,39 +17,17 @@ jobs:
 
       - name: Extract main.zip
         run: |
-          echo "🔍 بررسی main.zip..."
           if [ ! -f "main.zip" ]; then
             echo "❌ فایل main.zip نیست!"
             exit 1
           fi
-          
-          echo "📦 اکسترکت..."
           unzip -o main.zip
-          
-          echo "🗑️ حذف main.zip..."
           rm main.zip
-          
-          echo "✅ فایل‌های جدید:"
-          ls -la
+          echo "✅ اکسترکت کامل شد"
 
       - name: Commit and Push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add -A
-          
-          echo "📊 وضعیت:"
-          git status
-          
-          if git diff --staged --quiet; then
-            echo "⚠️ تغییری نیست"
-            exit 0
-          fi
-          
-          git commit -m "Extract main.zip to root [skip ci]"
-          
-          echo "📤 در حال push..."
-          git push origin HEAD:main
-          
-          echo "✅ تمام!"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Extract main.zip to root [skip ci]
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
