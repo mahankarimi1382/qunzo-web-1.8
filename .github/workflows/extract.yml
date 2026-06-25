@@ -1,29 +1,44 @@
-name: Extract and Commit main.zip
+name: Extract main.zip to Root
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  extract-and-commit:
+  extract:
     runs-on: ubuntu-latest
     permissions:
-      contents: write        # اجازه‌ی push دادن
+      contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extract main.zip to 'main' folder
+      - name: Extract and Move to Root
         run: |
-          mkdir -p main
-          unzip main.zip -d main
+          if [ ! -f "main.zip" ]; then
+            echo "❌ فایل main.zip نیست!"
+            exit 1
+          fi
+          
+          echo "📦 اکسترکت..."
+          unzip -o main.zip
+          
+          # اگر پوشه main وجود دارد، محتویاتش را به ریشه منتقل کن
+          if [ -d "main" ]; then
+            echo "📂 انتقال از پوشه main به ریشه..."
+            mv main/* . 2>/dev/null || true
+            mv main/.* . 2>/dev/null || true
+            rm -rf main
+          fi
+          
+          rm main.zip
+          echo "✅ اکسترکت و انتقال کامل شد"
 
-      - name: Commit extracted files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add main/
-          git commit -m "Extract main.zip to main/" || echo "No changes to commit"
-          git push
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Extract main.zip to root [skip ci]
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
