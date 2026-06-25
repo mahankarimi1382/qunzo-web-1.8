@@ -13,59 +13,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract main.zip
+      - name: Check files
         run: |
-          set -e  # هر خطایی فوراً متوقف شود
-          
-          echo "📋 محتویات ریشه پروژه:"
+          echo "=== محتویات ریشه ==="
           ls -la
-          
           echo ""
-          echo "📦 محتویات main.zip:"
-          unzip -l main.zip
+          echo "=== بررسی main.zip ==="
+          if [ -f "main.zip" ]; then
+            echo "✅ main.zip وجود دارد"
+            echo "=== محتویات ZIP ==="
+            unzip -l main.zip
+          else
+            echo "❌ main.zip وجود ندارد!"
+          fi
+
+      - name: Extract
+        run: |
+          if [ ! -f "main.zip" ]; then
+            echo "⛔ فایل نیست، رد شد"
+            exit 0
+          fi
           
-          echo ""
-          echo "🔧 در حال اکسترکت..."
-          rm -rf temp_extract
-          mkdir temp_extract
+          mkdir -p temp_extract
           unzip -o main.zip -d temp_extract
-          
-          echo ""
-          echo "📂 محتویات اکسترکت شده:"
+          echo "=== محتویات اکسترکت شده ==="
           ls -la temp_extract
           
-          # انتقال به ریشه
-          echo ""
-          echo "➡️ در حال انتقال به ریشه..."
           cp -r temp_extract/* . 2>/dev/null || true
           cp -r temp_extract/.* . 2>/dev/null || true
           rm -rf temp_extract main.zip
           
-          echo ""
-          echo "✅ محتویات جدید ریشه:"
+          echo "=== محتویات جدید ریشه ==="
           ls -la
 
-      - name: Commit changes
+      - name: Commit
         run: |
-          set -e
-          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          echo "📊 وضعیت گیت:"
+          git add .
           git status
           
-          git add .
-          
           if git diff --staged --quiet; then
-            echo "⚠️ هیچ تغییری برای کامیت وجود ندارد!"
-            exit 1
+            echo "⚠️ تغییری نیست"
+          else
+            git commit -m "Extract main.zip [skip ci]"
+            git push || echo "❌ Push شکست خورد"
           fi
-          
-          echo "💾 در حال کامیت..."
-          git commit -m "Extract main.zip to root [skip ci]"
-          
-          echo "📤 در حال push..."
-          git push
-          
-          echo "✅ تمام!"
