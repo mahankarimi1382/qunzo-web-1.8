@@ -15,28 +15,57 @@ jobs:
 
       - name: Extract main.zip
         run: |
-          echo "بررسی وجود فایل..."
-          if [ ! -f "main.zip" ]; then
-            echo "⚠️ فایل main.zip در گیت‌هاب نیست!"
-            exit 0
-          fi
+          set -e  # هر خطایی فوراً متوقف شود
           
-          echo "اکسترکت..."
-          mkdir -p temp_extract
+          echo "📋 محتویات ریشه پروژه:"
+          ls -la
+          
+          echo ""
+          echo "📦 محتویات main.zip:"
+          unzip -l main.zip
+          
+          echo ""
+          echo "🔧 در حال اکسترکت..."
+          rm -rf temp_extract
+          mkdir temp_extract
           unzip -o main.zip -d temp_extract
-          mv temp_extract/* . 2>/dev/null || true
-          mv temp_extract/.* . 2>/dev/null || true
+          
+          echo ""
+          echo "📂 محتویات اکسترکت شده:"
+          ls -la temp_extract
+          
+          # انتقال به ریشه
+          echo ""
+          echo "➡️ در حال انتقال به ریشه..."
+          cp -r temp_extract/* . 2>/dev/null || true
+          cp -r temp_extract/.* . 2>/dev/null || true
           rm -rf temp_extract main.zip
-          echo "تمام!"
+          
+          echo ""
+          echo "✅ محتویات جدید ریشه:"
+          ls -la
 
       - name: Commit changes
         run: |
+          set -e
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          echo "📊 وضعیت گیت:"
+          git status
+          
           git add .
+          
           if git diff --staged --quiet; then
-            echo "تغییری نیست."
-          else
-            git commit -m "Extract main.zip [skip ci]"
-            git push || echo "⚠️ خطا در push - شاخه main قفل است!"
+            echo "⚠️ هیچ تغییری برای کامیت وجود ندارد!"
+            exit 1
           fi
+          
+          echo "💾 در حال کامیت..."
+          git commit -m "Extract main.zip to root [skip ci]"
+          
+          echo "📤 در حال push..."
+          git push
+          
+          echo "✅ تمام!"
