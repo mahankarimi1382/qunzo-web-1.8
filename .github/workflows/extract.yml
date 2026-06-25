@@ -12,50 +12,44 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Check files
+      - name: Extract main.zip
         run: |
-          echo "=== محتویات ریشه ==="
-          ls -la
-          echo ""
-          echo "=== بررسی main.zip ==="
-          if [ -f "main.zip" ]; then
-            echo "✅ main.zip وجود دارد"
-            echo "=== محتویات ZIP ==="
-            unzip -l main.zip
-          else
-            echo "❌ main.zip وجود ندارد!"
-          fi
-
-      - name: Extract
-        run: |
+          echo "🔍 بررسی main.zip..."
           if [ ! -f "main.zip" ]; then
-            echo "⛔ فایل نیست، رد شد"
-            exit 0
+            echo "❌ فایل main.zip نیست!"
+            exit 1
           fi
           
-          mkdir -p temp_extract
-          unzip -o main.zip -d temp_extract
-          echo "=== محتویات اکسترکت شده ==="
-          ls -la temp_extract
+          echo "📦 اکسترکت..."
+          unzip -o main.zip
           
-          cp -r temp_extract/* . 2>/dev/null || true
-          cp -r temp_extract/.* . 2>/dev/null || true
-          rm -rf temp_extract main.zip
+          echo "🗑️ حذف main.zip..."
+          rm main.zip
           
-          echo "=== محتویات جدید ریشه ==="
+          echo "✅ فایل‌های جدید:"
           ls -la
 
-      - name: Commit
+      - name: Commit and Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
+          
+          git add -A
+          
+          echo "📊 وضعیت:"
           git status
           
           if git diff --staged --quiet; then
             echo "⚠️ تغییری نیست"
-          else
-            git commit -m "Extract main.zip [skip ci]"
-            git push || echo "❌ Push شکست خورد"
+            exit 0
           fi
+          
+          git commit -m "Extract main.zip to root [skip ci]"
+          
+          echo "📤 در حال push..."
+          git push origin HEAD:main
+          
+          echo "✅ تمام!"
