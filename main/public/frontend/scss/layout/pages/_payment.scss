@@ -1,0 +1,362 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  Payment styles
+/*----------------------------------------*/
+.payment-card-header {
+    margin-bottom: rem(24);
+    padding-bottom: rem(20);
+    border-bottom: 1px solid #eee;
+}
+
+.payment-card-box {
+    display: flex;
+    place-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 60px 0px;
+    margin: 0 15px;
+}
+
+.merchant-info-details {
+    display: flex;
+    align-items: center;
+    gap: 14px 14px;
+
+    @media #{$xxs} {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+.merchant-info-logo {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+
+.payment-card {
+    width: 560px;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    background: var(--td-white);
+    overflow: hidden;
+    padding: 30px 30px 35px;
+    box-shadow: 0px 30px 60px rgba(3, 4, 5, 0.1);
+
+    @media #{$xs} {
+        width: 100%;
+        padding: 25px 20px 20px;
+    }
+
+    .merchant-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: rem(25);
+        flex-wrap: wrap;
+        gap: 14px 20px;
+
+        @media #{$xxs} {
+            flex-direction: column;
+        }
+    }
+
+    .merchant-info-name {
+        font-weight: bold;
+        font-size: rem(18);
+        color: var(--td-heading);
+
+        @media #{$xs} {
+            font-size: rem(16);
+        }
+    }
+
+    .merchant-info-invoice {
+        font-size: 14px;
+    }
+
+    .merchant-info-amount {
+        font-size: rem(20);
+        font-weight: bold;
+
+        color: var(--td-heading);
+    }
+
+    .account-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .account-info-label {
+        margin-bottom: rem(8);
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .account-info-input-group {
+        margin-bottom: rem(10);
+
+        .account-info-input {
+            border: 1px solid #a9a9a9;
+            color: rgba(34, 34, 34, 0.60);
+
+            &:focus {
+                border-color: var(--td-primary);
+            }
+        }
+    }
+
+    .account-info-help-text {
+        font-size: 14px;
+        margin-bottom: rem(5);
+    }
+
+    .account-info-terms {
+        font-size: 14px;
+    }
+
+    .payment-card-footer {
+        padding: 0;
+        margin-top: rem(25);
+    }
+
+    .currency {
+        display: flex;
+        width: rem(68);
+        height: rem(34);
+        padding: rem(10);
+        justify-content: center;
+        align-items: center;
+        gap: rem(10);
+        border-radius: rem(4);
+        background: #EEE;
+        color: #222;
+        text-align: center;
+        font-size: rem(16);
+        font-weight: 700;
+    }
+
+    .payment-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: rem(20);
+
+        .merchant-info {
+            display: flex;
+            align-items: center;
+            gap: rem(10);
+
+            .icon {
+                img {
+                    width: rem(40);
+                }
+            }
+
+            .details {
+                .merchant-name {
+                    font-size: rem(16);
+                    font-weight: bold;
+                }
+
+                .invoice {
+                    font-size: 14px;
+
+                }
+            }
+        }
+
+        .amount {
+            font-size: rem(24);
+            font-weight: bold;
+            color: #333;
+        }
+    }
+
+    .otp-section {
+        margin-bottom: rem(15);
+
+        label {
+            display: block;
+            margin-bottom: rem(5);
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: rem(10);
+            border: 1px solid #ddd;
+            border-radius: rem(5);
+            font-size: rem(16);
+
+            &:focus {
+                outline: none;
+                border-color: #ff7e5f;
+                box-shadow: 0 0 5px rgba(255, 126, 95, 0.5);
+            }
+        }
+    }
+
+    .otp-timer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: rem(2);
+
+        .time-remaining {
+
+            font-size: 14px;
+            font-weight: 500;
+
+        }
+
+        .description {
+
+            font-size: 14px;
+            font-weight: 500;
+
+            .resend-code {
+                color: var(--td-primary);
+            }
+        }
+    }
+
+}
+
+.payment-card-logo {
+    img {
+        height: 30px;
+    }
+}
+
+.payment-status-card {
+    display: flex;
+    gap: 14px 14px;
+    padding: 14px 14px;
+    border-radius: 0.5rem;
+    background: #ddd;
+    align-items: center;
+    transition: all 0.3s ease;
+
+    .thumb {
+        flex: 0 0 auto;
+        width: rem(40);
+        height: rem(40);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #2d2d35;
+        font-size: rem(20);
+        color: #f39c12;
+        border-radius: 20px 35px 15px 20px;
+
+        img {
+            width: 100%;
+            border-radius: 50%;
+        }
+    }
+
+    .contents {
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--td-heading);
+
+            a {
+                &:hover {
+                    color: var(--td-primary);
+                }
+            }
+        }
+
+        .message {
+            font-size: 14px;
+
+        }
+    }
+
+    &.success {
+        background: rgba(39, 174, 96, 0.12);
+        border: 1px solid rgba(39, 174, 96, 0.3);
+
+        .thumb {
+            background: rgba(39, 174, 96, 0.15);
+            color: #27ae60;
+        }
+    }
+
+    &.danger {
+        background: rgba(228, 84, 75, 0.12);
+        border: 1px solid rgba(228, 84, 75, 0.3);
+
+        .thumb {
+            background: rgba(228, 84, 75, 0.15);
+            color: #e4544b;
+        }
+    }
+
+    &.warning {
+        background: rgba(255, 181, 71, 0.12);
+        border: 1px solid rgba(255, 181, 71, 0.3);
+
+        .thumb {
+            background: rgba(255, 181, 71, 0.15);
+            color: #ffb547;
+        }
+    }
+
+    &.info {
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+
+        .thumb {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .contents .title {
+            color: #3b82f6;
+        }
+    }
+}
+
+.payment-status-wrapper {
+
+    .icon-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .status-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+    }
+
+    .message-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .message-text {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .info-text {
+        font-size: 14px;
+    }
+}
