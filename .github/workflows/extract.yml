@@ -1,0 +1,53 @@
+name: Extract main.zip to Root
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract main.zip
+        run: |
+          # بررسی وجود فایل
+          if [ ! -f "main.zip" ]; then
+            echo "خطا: فایل main.zip در ریشه پیدا نشد!"
+            exit 1
+          fi
+          
+          echo "در حال اکسترکت main.zip..."
+          
+          # ساخت پوشه موقت و اکسترکت
+          mkdir temp_extract
+          unzip -q main.zip -d temp_extract
+          
+          # انتقال هوشمند به ریشه (حل مشکل پوشه تودرتو)
+          if [ "$(ls -1 temp_extract | wc -l)" -eq 1 ] && [ -d "temp_extract/$(ls temp_extract)" ]; then
+            mv temp_extract/*/* . 2>/dev/null || mv temp_extract/* .
+          else
+            mv temp_extract/* . 2>/dev/null
+          fi
+          mv temp_extract/.* . 2>/dev/null || true
+          
+          # پاکسازی
+          rm -rf temp_extract main.zip
+          
+          echo "اکسترکت کامل شد!"
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          if ! git diff --staged --quiet; then
+            git commit -m "Extract main.zip to root [skip ci]"
+            git push
+          else
+            echo "تغییری برای کامیت وجود ندارد."
+          fi
